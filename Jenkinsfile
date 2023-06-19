@@ -10,7 +10,7 @@ pipeline {
                 script{
                     
                     gitCheckout(
-                        branch: "main"
+                        branch: "main",
                         url: "https://github.com/ojoopeyemi74/ci-cd-jenkins-MR-devops-Ope-practise.git"
 
                     )
