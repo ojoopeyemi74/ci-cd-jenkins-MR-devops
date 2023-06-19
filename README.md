@@ -37,3 +37,7 @@ sudo docker run hello-world
 
 # we are starting SOnaqube on the same sever using docker run
 docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube
+
+# configure jenkins to use webhook with github and tried git checkout using the pipeline to confirm the connectivity
+
+#

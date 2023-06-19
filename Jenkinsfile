@@ -1,3 +1,5 @@
+@Library('my-shared-library') _
+
 pipeline {
     agent any
 
@@ -6,7 +8,12 @@ pipeline {
         stage ('Git checkout'){
             steps{
                 script{
-                    git branch: 'main', url: 'https://github.com/ojoopeyemi74/ci-cd-jenkins-MR-devops-Ope-practise.git'
+                    
+                    gitCheckout(
+                        branch: "main"
+                        url: "https://github.com/ojoopeyemi74/ci-cd-jenkins-MR-devops-Ope-practise.git"
+
+                    )
                 }
             }
         }
