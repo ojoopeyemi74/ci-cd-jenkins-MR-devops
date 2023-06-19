@@ -12,8 +12,15 @@ pipeline {
                     gitCheckout(
                         branch: "main",
                         url: "https://github.com/ojoopeyemi74/ci-cd-jenkins-MR-devops-Ope-practise.git"
-
                     )
+                }
+            }
+        }
+        stage ('Unit Testing maven'){
+            steps{
+                script{
+                    
+                    mvnTest()
                 }
             }
         }
