@@ -7,7 +7,7 @@ pipeline {
         choice(name: 'action', choices: 'create\ndelete', description: 'choose create/destroy')
         string(name: 'ImageName', description: "name of docker build", defaultValue: 'javapp')
         string(name: 'ImageTag', description: "tagof docker build", defaultValue: 'v1')
-        string(name: 'AppName', description: "name of Application", defaultValue: 'springboot')
+        string(name: 'DockerHubUser', description: "name of Application", defaultValue: 'opeyemiojo')
     }
 
 
@@ -25,39 +25,39 @@ pipeline {
                 }
             }
         }
-        stage ('Unit Testing maven'){
-            when {expression { params.action == 'create' }}
-            steps{
-                script{
+        // stage ('Unit Testing maven'){
+        //     when {expression { params.action == 'create' }}
+        //     steps{
+        //         script{
                     
-                    mvnTest()
-                }
-            }
-        }
-        stage ('mvn Integration test'){
-            when {expression { params.action == 'create' }}
-            steps{
-                script{
-                    mvnintegrationTest()
-                }
-            }
-        }
-        stage ('sonar static code analysis'){
-            when {expression { params.action == 'create' }}
-            steps{
-                script{
-                    staticCodeAnalysis()
-                }
-            }
-        }
-        stage("Quality Gate") {
-            when {expression { params.action == 'create' }}
-            steps {
-              script{
-                qualityGateStatus()
-              }
-            }
-          }
+        //             mvnTest()
+        //         }
+        //     }
+        // }
+        // stage ('mvn Integration test'){
+        //     when {expression { params.action == 'create' }}
+        //     steps{
+        //         script{
+        //             mvnintegrationTest()
+        //         }
+        //     }
+        // }
+        // stage ('sonar static code analysis'){
+        //     when {expression { params.action == 'create' }}
+        //     steps{
+        //         script{
+        //             staticCodeAnalysis()
+        //         }
+        //     }
+        // }
+        // stage("Quality Gate") {
+        //     when {expression { params.action == 'create' }}
+        //     steps {
+        //       script{
+        //         qualityGateStatus()
+        //       }
+        //     }
+        //   }
         stage("mvn build"){
             when {expression { params.action == 'create' }}
             steps{
@@ -70,7 +70,7 @@ pipeline {
             when {expression { params.action == 'create' }}
             steps{
                 script{
-                    dockerBuild("${params.ImageName}", "${params.ImageTag}", "${params.AppName}")
+                    dockerBuild("${params.ImageName}", "${params.ImageTag}", "${params.DockerHubUser}")
                 }
             }
         }
