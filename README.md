@@ -14,6 +14,11 @@ echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
 sudo apt-get update -y
 sudo apt-get install jenkins -y
 
+# Install Maven
+sudo apt update -y
+sudo apt install maven -y
+mvn -version
+
 # docker installation on the same server
 
 sudo apt update
