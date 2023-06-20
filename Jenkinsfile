@@ -3,9 +3,14 @@
 pipeline {
     agent any
 
+    parameters{
+        choice(name: 'action', choices: 'create\ndelete', description: 'choose create/destroy')
+    }
+
     stages{
 
         stage ('Git checkout'){
+            when {expression { params.action == 'create' }}
             steps{
                 script{
                     
@@ -17,6 +22,7 @@ pipeline {
             }
         }
         stage ('Unit Testing maven'){
+            when {expression { params.action == 'create' }}
             steps{
                 script{
                     
@@ -25,9 +31,18 @@ pipeline {
             }
         }
         stage ('mvn Integration test'){
+            when {expression { params.action == 'create' }}
             steps{
                 script{
                     mvnintegrationTest()
+                }
+            }
+        }
+        stage ('sonar static code analysis'){
+            when {expression { params.action == 'create' }}
+            steps{
+                script{
+                    staticCodeAnalysis()
                 }
             }
         }
