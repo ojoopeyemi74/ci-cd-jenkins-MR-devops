@@ -1,73 +1,47 @@
-pipeline{
-    
-    agent any 
-    
+pipeline {
+    agent any
+
+    tools {
+        maven "maven"
+    }
+
+    environment {
+        registry = '772745136297.dkr.ecr.eu-west-2.amazonaws.com/hellodatarepo'
+        registryCredential = 'jenkins-ecr-login-credentials'
+        dockerImage = ''
+    }
+
     stages {
-        
-        stage('Git Checkout'){
-            
-            steps{
-                
-                script{
-                    
-                    git branch: 'main', url: 'https://github.com/vikash-kumar01/mrdevops_javaapplication.git'
+        stage("Checkout from GitHub") {
+            steps {
+                git branch: 'master', url: 'https://github.com/ojoopeyemi74/springboot-maven-micro.git'
+            }
+        }
+
+        stage("Clean and Test") {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+
+        stage("Maven Package") {
+            steps {
+                sh 'mvn package'
+            }
+        }
+
+        stage("SonarQube Analysis") {
+            steps {
+                withSonarQubeEnv(installationName: 'SonarQube', credentialsId: 'jenkins-sonar-token') {
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
-        stage('UNIT testing'){
-            
-            steps{
-                
-                script{
-                    
-                    sh 'mvn test'
+
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
-        stage('Integration testing'){
-            
-            steps{
-                
-                script{
-                    
-                    sh 'mvn verify -DskipUnitTests'
-                }
-            }
-        }
-        stage('Maven build'){
-            
-            steps{
-                
-                script{
-                    
-                    sh 'mvn clean install'
-                }
-            }
-        }
-        stage('Static code analysis'){
-            
-            steps{
-                
-                script{
-                    
-                    withSonarQubeEnv(credentialsId: 'sonar-api') {
-                        
-                        sh 'mvn clean package sonar:sonar'
-                    }
-                   }
-                    
-                }
-            }
-            stage('Quality Gate Status'){
-                
-                steps{
-                    
-                    script{
-                        
-                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
-                    }
-                }
-            }
-        }
-        
-}
