@@ -6,8 +6,12 @@ pipeline {
     parameters{
         choice(name: 'action', choices: 'create\ndelete', description: 'choose create/destroy')
         string(name: 'ImageName', description: "name of docker build", defaultValue: 'javapp')
-        string(name: 'ImageTag', description: "tagof docker build", defaultValue: 'v1')
+        string(name: 'ImageTag', description: "tag of docker build", defaultValue: 'v1')
         string(name: 'DockerHubUser', description: "name of Application", defaultValue: 'opeyemiojo')
+    }
+
+    environment{
+        dockerImage = ''
     }
 
 
@@ -66,11 +70,18 @@ pipeline {
                 }
             }
         }
-        stage("Docker Image Build"){
-            when {expression { params.action == 'create' }}
+        // stage("Docker Image Build"){
+        //     when {expression { params.action == 'create' }}
+        //     steps{
+        //         script{
+        //             dockerBuild("${params.ImageName}", "${params.ImageTag}", "${params.DockerHubUser}")
+        //         }
+        //     }
+        // }
+        stage ("docker image build"){
             steps{
                 script{
-                    dockerBuild("${params.ImageName}", "${params.ImageTag}", "${params.DockerHubUser}")
+                    dockerImage = docker.build("${BUILD_NUMBER}")
                 }
             }
         }
