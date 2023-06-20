@@ -1,89 +1,73 @@
-@Library('my-shared-library') _
-
-pipeline {
-    agent any
-
-    parameters{
-        choice(name: 'action', choices: 'create\ndelete', description: 'choose create/destroy')
-        string(name: 'ImageName', description: "name of docker build", defaultValue: 'javapp')
-        string(name: 'ImageTag', description: "tag of docker build", defaultValue: 'v1')
-        string(name: 'DockerHubUser', description: "name of Application", defaultValue: 'opeyemiojo')
-    }
-
-    environment{
-        dockerImage = ''
-    }
-
-
-    stages{
-
-        stage ('Git checkout'){
-            when {expression { params.action == 'create' }}
+pipeline{
+    
+    agent any 
+    
+    stages {
+        
+        stage('Git Checkout'){
+            
             steps{
+                
                 script{
                     
-                    gitCheckout(
-                        branch: "main",
-                        url: "https://github.com/ojoopeyemi74/ci-cd-jenkins-MR-devops-Ope-practise.git"
-                    )
+                    git branch: 'main', url: 'https://github.com/vikash-kumar01/mrdevops_javaapplication.git'
                 }
             }
         }
-        // stage ('Unit Testing maven'){
-        //     when {expression { params.action == 'create' }}
-        //     steps{
-        //         script{
+        stage('UNIT testing'){
+            
+            steps{
+                
+                script{
                     
-        //             mvnTest()
-        //         }
-        //     }
-        // }
-        // stage ('mvn Integration test'){
-        //     when {expression { params.action == 'create' }}
-        //     steps{
-        //         script{
-        //             mvnintegrationTest()
-        //         }
-        //     }
-        // }
-        // stage ('sonar static code analysis'){
-        //     when {expression { params.action == 'create' }}
-        //     steps{
-        //         script{
-        //             staticCodeAnalysis()
-        //         }
-        //     }
-        // }
-        // stage("Quality Gate") {
-        //     when {expression { params.action == 'create' }}
-        //     steps {
-        //       script{
-        //         qualityGateStatus()
-        //       }
-        //     }
-        //   }
-        stage("mvn build"){
-            when {expression { params.action == 'create' }}
-            steps{
-                script{
-                    mvnBuild()
+                    sh 'mvn test'
                 }
             }
         }
-        // stage("Docker Image Build"){
-        //     when {expression { params.action == 'create' }}
-        //     steps{
-        //         script{
-        //             dockerBuild("${params.ImageName}", "${params.ImageTag}", "${params.DockerHubUser}")
-        //         }
-        //     }
-        // }
-        stage ("docker image build"){
+        stage('Integration testing'){
+            
             steps{
+                
                 script{
-                    dockerImage = docker.build("${BUILD_NUMBER}")
+                    
+                    sh 'mvn verify -DskipUnitTests'
                 }
             }
         }
-    }
+        stage('Maven build'){
+            
+            steps{
+                
+                script{
+                    
+                    sh 'mvn clean install'
+                }
+            }
+        }
+        stage('Static code analysis'){
+            
+            steps{
+                
+                script{
+                    
+                    withSonarQubeEnv(credentialsId: 'sonar-api') {
+                        
+                        sh 'mvn clean package sonar:sonar'
+                    }
+                   }
+                    
+                }
+            }
+            stage('Quality Gate Status'){
+                
+                steps{
+                    
+                    script{
+                        
+                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
+                    }
+                }
+            }
+        }
+        
 }
