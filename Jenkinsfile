@@ -47,11 +47,20 @@ pipeline {
             }
         }
         stage("Quality Gate") {
+            when {expression { params.action == 'create' }}
             steps {
               script{
                 qualityGateStatus()
               }
             }
           }
+        stage("mvn build"){
+            when {expression { params.action == 'create' }}
+            steps{
+                script{
+                    mvnBuild()
+                }
+            }
+        }
     }
 }
