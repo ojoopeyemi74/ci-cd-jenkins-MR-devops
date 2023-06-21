@@ -99,10 +99,8 @@ pipeline {
 
         //            }
         //         }
-        pipeline {
-  agent any
+        
 
-  stages {
     stage('Connect to EKS') {
       steps {
         script {
@@ -124,11 +122,5 @@ pipeline {
         }
       }
     }
-
-    // ... other stages of your pipeline ...
   }
-}
-
-           
-    }
 }
