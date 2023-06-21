@@ -56,14 +56,15 @@ pipeline {
         //         }
         //     }
         // }
-        stage('docker image build'){
-            steps{
-                script{
-                    sh 'docker image build -t ${JOB_NAME}:v1.${BUILD_ID}'
-                    sh 'docker image tag ${JOB_NAME}:v1.${BUILD_ID} opeyemiojo/${JOB_NAME}:v1.${BUILD_ID}'
-                    sh ' docker image tag ${JOB_NAME}:v1.${BUILD_ID} opeyemiojo/${JOB_NAME}:latest'
-                }
-            }
+        stage('docker image build') {
+    steps {
+        script {
+            def imageName = "${JOB_NAME}:v1.${BUILD_ID}"
+            def taggedImageName = "opeyemiojo/${JOB_NAME}:v1.${BUILD_ID}"
+            
+            sh "docker image build -t ${imageName} ."
+            sh "docker image tag ${imageName} ${taggedImageName}"
+            sh "docker image tag ${imageName} opeyemiojo/${JOB_NAME}:latest"
         }
     }
 }
