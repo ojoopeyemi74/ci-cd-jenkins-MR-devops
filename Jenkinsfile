@@ -1,15 +1,15 @@
 pipeline {
     agent any
 
-    // parameters{
-    //     choice(name: 'action',  choices: 'create\ndestroy\ndestroycluster', description: 'create or destroy cluster')
-    //     string(name: 'cluster', defaultValue: 'eksdemo1', description: 'eks cluster name')
-    //     string(name: 'region', defaultValue: 'eu-west-2', description: 'eks cluster region')
-    // }
-    // environment{
-    //     ACCESS_KEY = credentials("aws_access_key_id")
-    //     SECRET_KEY = credentials("aws_secret_key")
-    // }
+    parameters{
+        choice(name: 'action',  choices: 'create\ndestroy\ndestroycluster', description: 'create or destroy cluster')
+        string(name: 'cluster', defaultValue: 'eksdemo1', description: 'eks cluster name')
+        string(name: 'region', defaultValue: 'eu-west-2', description: 'eks cluster region')
+    }
+    environment{
+        ACCESS_KEY = credentials("aws_access_key_id")
+        SECRET_KEY = credentials("aws_secret_key")
+    }
 
     stages {
         stage("Clean and Test") {
@@ -86,41 +86,19 @@ pipeline {
                 }
             }
         }
-        // stage('EKS connect'){
-        //     steps{
+        stage('EKS connect'){
+            steps{
                 
-        //         sh """
-        //         aws configure set aws_access_key_id "$ACCESS_KEY"
-        //         aws configure set aws_secret_access_key "$SECRET_KEY"
-        //         aws configure set region ""
-        //         aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}
+                sh """
+                aws configure set aws_access_key_id "$ACCESS_KEY"
+                aws configure set aws_secret_access_key "$SECRET_KEY"
+                aws configure set region ""
+                aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}
 
-        //         """
+                """
 
-        //            }
-        //         }
-        
-
-    stage('Connect to EKS') {
-      steps {
-        script {
-          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY', credentialsId: 'aws-credentials-new']]) {
-            def clusterName = 'eksdemo1'
-            def region = 'eu-west-2'
-
-            // Configure AWS CLI
-            sh "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID"
-            sh "aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY"
-            sh "aws configure set default.region $region"
-
-            // Update kubeconfig with EKS cluster details
-            sh "aws eks update-kubeconfig --name $clusterName --region $region"
-
-            // Verify connectivity
-            sh 'kubectl get nodes'
-          }
-        }
-      }
-    }
-  }
+                   }
+                }
+    }   
 }
+        
