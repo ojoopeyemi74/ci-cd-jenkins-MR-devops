@@ -65,5 +65,16 @@ pipeline {
                 }
             }
         }
+        stage('push image to dockerhub'){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'dockerhub-auth', variable: 'opeyemiojo')]) {
+                       sh 'docker login -u opeyemiojo -p ${dockerhub-auth}'
+                       sh 'docker image push opeyemiojo/$JOB_NAME:v1.$BUILD_ID'
+                       sh 'docker image push opeyemiojo/$JOB_NAME:latest'
+                   }
+                }
+            }
+        }
     }
 }
