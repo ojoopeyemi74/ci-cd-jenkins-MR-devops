@@ -64,7 +64,7 @@ pipeline {
 
                     sh "docker image build -t ${imageName} ."
                     sh "docker image tag ${imageName} ${taggedImageName}"
-                    sh "docker image tag ${imageName} opeyemiojo/${JOB_NAME}:latest"
+                    sh "docker image tag ${imageName} ${taggedImageName}:latest"
                 }
             }
         }
