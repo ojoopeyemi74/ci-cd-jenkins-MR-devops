@@ -76,5 +76,26 @@ pipeline {
                 }
             }
         }
+        stage('EKS connect'){
+            steps{
+                script{
+                    withCredentials([<object of type com.cloudbees.jenkins.plugins.awscredentials.AmazonWebServicesCredentialsBinding>]) {
+                         def clusterName = 'eksdemo1'
+                         def region = 'eu-west-2'
+
+                    // configure AWS CLI
+                         sh "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID"
+                         sh "aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY"
+                         sh "aws configure set default.region $region"
+
+                         // Update kubeconfig with EKS cluster details
+                         sh "aws eks update-kubeconfig --name $clusterName --region $region"
+
+                         // verify connectivity
+                         sh 'kubectl get nodes'
+                   }
+                }
+            }
+        }
     }
 }
