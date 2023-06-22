@@ -1,14 +1,16 @@
 pipeline {
     agent any
 
-    parameters{
-        choice(name: 'action',  choices: 'create\ndestroy\ndestroycluster', description: 'create or destroy cluster')
-        string(name: 'cluster', defaultValue: 'eksdemo1', description: 'eks cluster name')
-        string(name: 'region', defaultValue: 'eu-west-2', description: 'eks cluster region')
-    }
+    // parameters{
+    //     choice(name: 'action',  choices: 'create\ndestroy\ndestroycluster', description: 'create or destroy cluster')
+    //     string(name: 'cluster', defaultValue: 'eksdemo1', description: 'eks cluster name')
+    //     string(name: 'region', defaultValue: 'eu-west-2', description: 'eks cluster region')
+    // }
     environment{
+        AWS_DEFAULT_REGION = 'eu-west-2'
         ACCESS_KEY = credentials("aws_access_key_id")
         SECRET_KEY = credentials("aws_secret_key")
+        EKS_CLUSTER = 'eks-demo1'
     }
 
     stages {
@@ -86,19 +88,27 @@ pipeline {
         //         }
         //     }
         // }
-        stage('EKS connect'){
-            steps{
+        // stage('EKS connect'){
+        //     steps{
                 
-                sh """
-                aws configure set aws_access_key_id "$ACCESS_KEY"
-                aws configure set aws_secret_access_key "$SECRET_KEY"
-                aws configure set region ""
-                aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}
+        //         sh """
+        //         aws configure set aws_access_key_id "$ACCESS_KEY"
+        //         aws configure set aws_secret_access_key "$SECRET_KEY"
+        //         aws configure set region ""
+        //         aws eks --region ${params.region} update-kubeconfig --name ${params.cluster}
 
-                """
+        //         """
 
-                   }
+        //            }
+        //         }
+        stage('Deploy to EKS Cluster') {
+            steps {
+                withAWS(credentials: 'aws-credentials-new', region: 'eu-wes-2')  {
+                    sh 'aws eks --region $AWS_DEFAULT_REGION  update-kubeconfig --name $EKS_CLUSTER'
+                    
                 }
-    }   
+            }
+        }
+    }
 }
-        
+      
