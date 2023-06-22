@@ -1,11 +1,11 @@
 pipeline {
     agent any
 
-    // parameters{
-    //     choice(name: 'action',  choices: 'create\ndestroy\ndestroycluster', description: 'create or destroy cluster')
-    //     string(name: 'cluster', defaultValue: 'eksdemo1', description: 'eks cluster name')
-    //     string(name: 'region', defaultValue: 'eu-west-2', description: 'eks cluster region')
-    // }
+    parameters{
+        choice(name: 'action',  choices: 'create\ndestroy\ndestroycluster', description: 'create or destroy cluster')
+        string(name: 'cluster', defaultValue: 'eksdemo1', description: 'eks cluster name')
+        string(name: 'region', defaultValue: 'eu-west-2', description: 'eks cluster region')
+    }
     environment{
         AWS_DEFAULT_REGION = 'eu-west-2'
         ACCESS_KEY = credentials("aws_access_key_id")
