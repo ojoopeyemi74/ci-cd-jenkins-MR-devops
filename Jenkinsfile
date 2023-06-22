@@ -26,48 +26,48 @@ pipeline {
             }
         }
 
-        // stage("SonarQube Analysis") {
-        //     steps {
-        //         withSonarQubeEnv(installationName: 'sonarqube-server', credentialsId: 'sonarqube-token') {
-        //             sh 'mvn sonar:sonar'
-        //         }
-        //     }
-        // }
+        stage("SonarQube Analysis") {
+            steps {
+                withSonarQubeEnv(installationName: 'sonarqube-server', credentialsId: 'sonarqube-token') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
 
-        // stage("Quality Gate") {
-        //     steps {
-        //         timeout(time: 2, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
-        // stage("Upload jar file to nexus"){
-        //     steps{
-        //         script{
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        stage("Upload jar file to nexus"){
+            steps{
+                script{
 
-        //             def readPomVersion = readMavenPom file: 'pom.xml'
+                    def readPomVersion = readMavenPom file: 'pom.xml'
 
-        //             def nexusRepo = readPomVersion.version.endsWith("SNAPSHOT") ? "demoapp-snapshot" : "demoapp-release"
+                    def nexusRepo = readPomVersion.version.endsWith("SNAPSHOT") ? "demoapp-snapshot" : "demoapp-release"
                     
-        //             nexusArtifactUploader artifacts:
-        //              [
-        //                 [
-        //                     artifactId: 'springboot', 
-        //                     classifier: '', 
-        //                     file: 'target/Uber.jar', 
-        //                     type: 'jar'
-        //                     ]
-        //                 ], 
-        //                     credentialsId: 'nexus-auth', 
-        //                     groupId: 'com.example', 
-        //                     nexusUrl: '3.8.29.196:8081', 
-        //                     nexusVersion: 'nexus3', 
-        //                     protocol: 'http', 
-        //                     repository: nexusRepo, 
-        //                     version: "${readPomVersion.version}"
-        //         }
-        //     }
-        // }
+                    nexusArtifactUploader artifacts:
+                     [
+                        [
+                            artifactId: 'springboot', 
+                            classifier: '', 
+                            file: 'target/Uber.jar', 
+                            type: 'jar'
+                            ]
+                        ], 
+                            credentialsId: 'nexus-auth', 
+                            groupId: 'com.example', 
+                            nexusUrl: '3.8.29.196:8081', 
+                            nexusVersion: 'nexus3', 
+                            protocol: 'http', 
+                            repository: nexusRepo, 
+                            version: "${readPomVersion.version}"
+                }
+            }
+        }
         stage('docker image build'){
             steps{
                 script{
@@ -121,25 +121,6 @@ pipeline {
                 }
             }
         }
-        stage('delete deployment') {
-    when {
-        expression { params.action == 'destroy' }
-    }
-    steps {
-        script {
-            def destroy = false
-            try {
-                input message: 'Please confirm the destroy to delete the deployment', ok: 'Ready to destroy the config'
-                destroy = true
-            } catch(err) {
-                destroy = false
-                currentBuild.result = 'UNSTABLE'
-            }
-            if (destroy) {
-                sh 'kubectl delete -f .'
-            }
-        }
-    }
-}
+       
 }
 }
