@@ -14,17 +14,17 @@ pipeline {
     }
 
     stages {
-    //     stage("Clean and Test") {
-    //         steps {
-    //             sh 'mvn clean test'
-    //         }
-    //     }
+        stage("Clean and Test") {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
 
-    //     stage("Maven Package") {
-    //         steps {
-    //             sh 'mvn package'
-    //         }
-    //     }
+        stage("Maven Package") {
+            steps {
+                sh 'mvn package'
+            }
+        }
 
         // stage("SonarQube Analysis") {
         //     steps {
@@ -67,27 +67,27 @@ pipeline {
         //                     version: "${readPomVersion.version}"
         //         }
         //     }
-        // }
-        // stage('docker image build'){
-        //     steps{
-        //         script{
-        //             sh "docker image build -t $JOB_NAME:v1.$BUILD_ID ."
-        //             sh "docker image tag $JOB_NAME:v1.$BUILD_ID opeyemiojo/$JOB_NAME:v1.$BUILD_ID "
-        //             sh "docker image tag $JOB_NAME:v1.$BUILD_ID opeyemiojo/$JOB_NAME:latest"
-        //         }
-        //     }
-        // }
-        // stage('push image to dockerhub'){
-        //     steps{
-        //         script{
-        //             withCredentials([string(credentialsId: 'dockerhub-cred', variable: 'DOCKERHUB_CREDENTIALS')]){
-        //                sh 'docker login -u opeyemiojo -p ${DOCKERHUB_CREDENTIALS}'
-        //                sh 'docker image push opeyemiojo/$JOB_NAME:v1.$BUILD_ID'
-        //                sh 'docker image push opeyemiojo/$JOB_NAME:latest'
-        //            }
-        //         }
-        //     }
-        // }
+        }
+        stage('docker image build'){
+            steps{
+                script{
+                    sh "docker image build -t $JOB_NAME:v1.$BUILD_ID ."
+                    sh "docker image tag $JOB_NAME:v1.$BUILD_ID opeyemiojo/$JOB_NAME:v1.$BUILD_ID "
+                    sh "docker image tag $JOB_NAME:v1.$BUILD_ID opeyemiojo/$JOB_NAME:latest"
+                }
+            }
+        }
+        stage('push image to dockerhub'){
+            steps{
+                script{
+                    withCredentials([string(credentialsId: 'dockerhub-cred', variable: 'DOCKERHUB_CREDENTIALS')]){
+                       sh 'docker login -u opeyemiojo -p ${DOCKERHUB_CREDENTIALS}'
+                       sh 'docker image push opeyemiojo/$JOB_NAME:v1.$BUILD_ID'
+                       sh 'docker image push opeyemiojo/$JOB_NAME:latest'
+                   }
+                }
+            }
+        }
         stage('EKS connect'){
             steps{
                 

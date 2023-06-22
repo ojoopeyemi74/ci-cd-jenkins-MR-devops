@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: myspringbootapp
-        image:  opeyemiojo/java_app_pipeline_proj:latest
+        image:  opeyemiojo/java_app_pipeline_proj
         imagePullPolicy: Always
         resources:
           limits:
