@@ -67,7 +67,7 @@ pipeline {
         //                     version: "${readPomVersion.version}"
         //         }
         //     }
-        }
+        // }
         stage('docker image build'){
             steps{
                 script{
@@ -121,6 +121,5 @@ pipeline {
                 }
             }
         }
-    }
 }
-      
+}
