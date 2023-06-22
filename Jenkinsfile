@@ -134,7 +134,7 @@ pipeline {
                         destroy = false
                         CurrentBuild.result= 'UNSTABLE'
                     }
-                    if(apply){
+                    if(destroy){
                         
                         sh 'kubectl delete -f .'
                     }
