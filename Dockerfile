@@ -1,9 +1,9 @@
-FROM amazoncorretto:8-alpine3.16-jdk
+FROM openjdk:11.0
 
 WORKDIR /app
 
-COPY /target/*.jar /app.jar
+COPY /target/Uber.jar /app/
 
-EXPOSE 9099
+EXPOSE 9090
 
-CMD [ "java", "-jar", "app.jar" ]
+CMD [ "java", "-jar", "Uber.jar" ]
