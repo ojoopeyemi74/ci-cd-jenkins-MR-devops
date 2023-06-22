@@ -121,25 +121,25 @@ pipeline {
                 }
             }
         }
-        stage('delete deployment'){
-            when { expression {params.action == 'destroy'}}
-            steps{
-                script{
-                    def destroy = false
-                    try{
-                        input message: 'please confirm the destroy to delete the deployment', ok: 'Ready to destroy the config'
-                        destroy = true
-                    }
-                    catch(err){
-                        destroy = false
-                        CurrentBuild.result= 'UNSTABLE'
-                    }
-                    if(destroy){
-                        
-                        sh 'kubectl delete -f .'
-                    }
-                }
+        stage('delete deployment') {
+    when {
+        expression { params.action == 'destroy' }
+    }
+    steps {
+        script {
+            def destroy = false
+            try {
+                input message: 'Please confirm the destroy to delete the deployment', ok: 'Ready to destroy the config'
+                destroy = true
+            } catch(err) {
+                destroy = false
+                currentBuild.result = 'UNSTABLE'
+            }
+            if (destroy) {
+                sh 'kubectl delete -f .'
             }
         }
+    }
+}
 }
 }
