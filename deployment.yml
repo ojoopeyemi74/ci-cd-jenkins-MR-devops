@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myspringbootapp
+  template:
+    metadata:
+      labels:
+        app: myspringbootapp
+    spec:
+      containers:
+      - name: myspringbootapp
+        image:  opeyemiojo/java_app_pipeline_proj:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 9099

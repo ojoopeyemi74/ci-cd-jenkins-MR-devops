@@ -7,10 +7,10 @@ pipeline {
         string(name: 'region', defaultValue: 'eu-west-2', description: 'eks cluster region')
     }
     environment{
-        AWS_DEFAULT_REGION = 'eu-west-2'
+
         ACCESS_KEY = credentials("aws_access_key_id")
         SECRET_KEY = credentials("aws_secret_key")
-        EKS_CLUSTER = 'eks-demo1'
+
     }
 
     stages {
@@ -99,16 +99,28 @@ pipeline {
 
                 """
 
-                   }
+            }
+        }
+        stage('eks deployment'){
+            when { expression {params.action == 'create'}}
+            steps{
+                script{
+                    def apply = false
+                    try{
+                        input message: 'please confirm the apply to initiate the deployment', ok: 'Ready to apply the config'
+                        apply = true
+                    }
+                    catch(err){
+                        apply = false
+                        CurrentBuild.result= 'UNSTABLE'
+                    }
+                    if(apply){
+                        
+                        sh 'kubectl apply -f .'
+                    }
                 }
-        // stage('Deploy to EKS Cluster') {
-        //     steps {
-        //         withAWS(credentials: 'aws-credentials-new', region: 'eu-wes-2')  {
-        //             sh 'aws eks --region $AWS_DEFAULT_REGION  update-kubeconfig --name $EKS_CLUSTER'
-                    
-        //         }
-        //     }
-        // }
+            }
+        }
     }
 }
       
